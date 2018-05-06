@@ -10,6 +10,7 @@
                     </div>
                     <div class="container-card-buttons">
                         <el-button type="primary" @click="edit(round.id)" round>Editar</el-button>
+                         <el-button type="primary" @click="ranking(round.id)" round>Classificação</el-button>
                         <el-button type="primary" @click="match(round.id)" round>Partidas</el-button>
                         <el-button type="primary" @click="participants(round.id)" round>Apostas</el-button>
                     </div>
@@ -47,6 +48,9 @@ export default {
         },
         participants(id){
             this.$router.push({name: 'round-participant', params: { id }});
+        },
+        ranking(id){
+            this.$router.push({ name: 'ranking', params: { id }});
         }
     }
 }

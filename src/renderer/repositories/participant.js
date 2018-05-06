@@ -17,3 +17,6 @@ export async function getParticipant(id) {
     return DB.participant.get(parseInt(id));
 }
 
+export async function getParticipantsByIds(ids){
+    return DB.participant.where('id').anyOf(ids).toArray();
+}

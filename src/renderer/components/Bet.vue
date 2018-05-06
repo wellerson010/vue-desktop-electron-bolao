@@ -5,13 +5,13 @@
                 <div class="container-team" v-if="displayTeam">
                     {{ teams[match.team_home_id].name}}
                 </div>
-                <div class="container-input">
+                <div class="container-input" v-if="displayBet">
                     <el-input v-model="bet[match.id].goals_home"/>
                 </div>
                 <div class="container-x">
                     X
                 </div>
-                <div class="container-input">
+                <div class="container-input" v-if="displayBet">
                     <el-input v-model="bet[match.id].goals_away"/>
                 </div>
                 <div class="container-team" v-if="displayTeam">
@@ -20,7 +20,10 @@
             </div>
 
             <div class="container-buttons">
-                <el-button type="primary" @click="save">Salvar</el-button>
+                <el-button-group>
+                 <el-button type="primary" @click="save">Salvar</el-button>
+                 <el-button type="danger" @click="cancel">Cancelar</el-button>
+            </el-button-group>
             </div>
         </div>
     </div>
@@ -28,7 +31,7 @@
 
 <script>
 import { getTeams } from '../repositories/team';
-import { getByRoundAndParticipant } from '../repositories/bet';
+import { getByRoundAndParticipant, saveBet } from '../repositories/bet';
 
 export default {
     async created() {
@@ -45,7 +48,10 @@ export default {
         this.teams = teamsObject;
     },
     computed: {
-        displayTeam(){
+        displayBet(){
+            return Object.keys(this.bet).length > 0;
+        },
+        displayTeam() {
             return Object.keys(this.teams).length > 0;
         }
     },
@@ -57,21 +63,28 @@ export default {
         };
     },
     methods: {
+        cancel(){
+            this.closeCallback();
+        },
         async load() {
             if (this.participant && this.round) {
                 this.loading = true;
-                this.prepareBet();
+                await this.prepareBet();
                 this.loading = false;
             }
         },
-        prepareBet() {
-            const bets = getByRoundAndParticipant(this.round, this.participant);
-
+        async prepareBet() {
+            const bets = await getByRoundAndParticipant(this.round, this.participant);
+           
             const betObject = {};
 
-            for (let bet in bets) {
+            for (let bet of bets) {
                 betObject[bet.match_id] = bet;
             }
+
+            console.log('betobject', betObject);
+            console.log('bets', bets);
+            console.log('matchs', this.matchs);
 
             for (let match of this.matchs) {
                 if (!betObject[match.id]) {
@@ -83,13 +96,38 @@ export default {
                         goals_away: -1
                     };
                 }
-            }
+            } 
 
             this.bet = betObject;
         },
-        save() {}
+        save() {
+            for (let bet in this.bet) {
+                const b = this.bet[bet];
+
+                if (b.goals_home == -1 || b.goals_away == -1) {
+                    const c = confirm(
+                        'Nem todos os jogos tiveram resultado, deseja continuar?'
+                    );
+                    if (c) {
+                        this.saveConfirm();
+                    }
+                    return;
+                }
+            }
+
+            this.saveConfirm();
+        },
+        async saveConfirm() {
+            this.loading = true;
+
+            await saveBet(this.bet);
+
+            this.saveCallback();
+
+            this.loading = false;
+        }
     },
-    props: ['participant', 'round', 'matchs'],
+    props: ['participant', 'round', 'matchs', 'saveCallback', 'closeCallback'],
     watch: {
         participant() {
             this.load();

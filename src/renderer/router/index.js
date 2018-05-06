@@ -7,6 +7,7 @@ import ParticipantList from '../components/ParticipantList';
 import ParticipantEdit from '../components/ParticipantEdit';
 import RoundParticipant from '../components/RoundParticipant';
 import MatchList from '../components/MatchList';
+import Ranking from '../components/Ranking';
 
 Vue.use(Router);
 
@@ -41,6 +42,11 @@ export default new Router({
       path: '/match-list/:id',
       name: 'match-list',
       component: MatchList
+    },
+    {
+      path: '/ranking/:id',
+      name: 'ranking',
+      component: Ranking
     },
     {
       path: '*',

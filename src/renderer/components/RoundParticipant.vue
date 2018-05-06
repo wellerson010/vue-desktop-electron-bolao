@@ -2,7 +2,12 @@
     <div v-loading="loading">
         <h1>Rodada {{round.number}}</h1>
         <el-dialog :visible.sync="matchParticipantVisible" :before-close="handleCloseMatchParticipant">
-            <bet :participant="participantIdEdit" :round="round.id" :matchs="this.matchs"/>
+            <bet 
+                :participant="participantIdEdit"
+                :round="round.id"
+                :matchs="this.matchs" 
+                :saveCallback="() => {this.matchParticipantVisible = false}"
+                :closeCallback="() => {this.matchParticipantVisible = false}"/>
         </el-dialog>
         <el-table :data="participants">
             <el-table-column label="Nome" prop="name"/>
