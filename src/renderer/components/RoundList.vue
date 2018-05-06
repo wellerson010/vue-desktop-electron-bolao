@@ -10,7 +10,8 @@
                     </div>
                     <div class="container-card-buttons">
                         <el-button type="primary" @click="edit(round.id)" round>Editar</el-button>
-                        <el-button type="primary" round>Participantes</el-button>
+                        <el-button type="primary" @click="match(round.id)" round>Partidas</el-button>
+                        <el-button type="primary" @click="participants(round.id)" round>Apostas</el-button>
                     </div>
                  <!--   <i class="el-icon-close"></i> -->
                 </div>
@@ -40,6 +41,12 @@ export default {
         },
         edit(id){
             this.$router.push({name: 'round-edit', params: { id }});
+        },
+        match(id){
+            this.$router.push({ name: 'match-list', params: { id }});
+        },
+        participants(id){
+            this.$router.push({name: 'round-participant', params: { id }});
         }
     }
 }

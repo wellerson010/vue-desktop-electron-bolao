@@ -7,9 +7,8 @@ export async function initDatabase() {
         round: '++id',
         participant: '++id, name',
         team: '++id',
-
-        match:
-            '++id, team_home_id, team_away_id, round_id, goals_home, goals_away',
+        match: '++id, round_id', //team_home_id, team_away_id, goals_home, goals_away
+        
         bet: '++id, participant_id, match_id, goals_home, goals_away, points',
         participant_round: '++id, participant_id, round_id'
     });
@@ -47,7 +46,7 @@ async function createTeams(db) {
         'Paraná'
     ];
 
-    for(name of teams){
+    for(let name of teams){
         await db.team.add({ name });
     }
 }
