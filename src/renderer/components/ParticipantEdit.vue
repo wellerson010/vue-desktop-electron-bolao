@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" v-loading="loading">
         <div>
             <label>
                 Nome: 
@@ -31,6 +31,7 @@ import { saveParticipant, getParticipant } from '../repositories/participant';
         data(){
             return {
                 id: 0,
+                loading: false,
                 name: ''
             }
         },
@@ -39,12 +40,16 @@ import { saveParticipant, getParticipant } from '../repositories/participant';
                 this.$router.push({name: 'participant'});
             },
             async getParticipant(){
+                this.loading = true;
                 const data = await getParticipant(this.id);
 
                 this.name = data.name;
+                this.loading = false;
             },
             async save(){
+                this.loading = true;
                 await saveParticipant(this.id, this.name);
+                this.loading = false;
                 this.$router.push({name: 'participant'});
             }
         }

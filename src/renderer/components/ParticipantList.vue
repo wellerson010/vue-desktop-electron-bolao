@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-loading="loading">
         <h1>Participantes 
             <i class="el-icon-plus" @click="add"></i>
         </h1>
@@ -20,24 +20,27 @@
 import { getParticipants } from '../repositories/participant';
 
 export default {
-    async created(){
+    async created() {
+        this.loading = true;
         const participants = await getParticipants();
         this.participants = participants;
+        this.loading = false;
     },
-    data(){
+    data() {
         return {
+            loading: false,
             participants: []
-        }
+        };
     },
     methods: {
-        add(){
-            this.$router.push({name: 'participant-edit'});
+        add() {
+            this.$router.push({ name: 'participant-edit' });
         },
-        edit(id){
-            this.$router.push({name: 'participant-edit', params: { id }});
+        edit(id) {
+            this.$router.push({ name: 'participant-edit', params: { id } });
         }
     }
-}
+};
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-loading="loading">
         <h1>Rodadas 
             <i class="el-icon-plus" @click="add"></i>
         </h1>
@@ -23,11 +23,14 @@ import { getRounds } from '../repositories/round';
 
 export default {
     async created(){
+        this.loading = true;
         const rounds = await getRounds();
         this.rounds = rounds;
+        this.loading = false;
     },
     data(){
         return {
+            loading: false,
             rounds: []
         }
     },
