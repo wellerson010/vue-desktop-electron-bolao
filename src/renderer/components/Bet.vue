@@ -2,7 +2,7 @@
     <div v-loading="loading">
         <div>
             <div class="match" v-for="match in matchs" :key="match.id">
-                <div class="container-team">
+                <div class="container-team" v-if="displayTeam">
                     {{ teams[match.team_home_id].name}}
                 </div>
                 <div class="container-input">
@@ -14,7 +14,7 @@
                 <div class="container-input">
                     <el-input v-model="bet[match.id].goals_away"/>
                 </div>
-                <div class="container-team">
+                <div class="container-team" v-if="displayTeam">
                     {{ teams[match.team_away_id].name}}
                 </div> 
             </div>
@@ -36,8 +36,17 @@ export default {
 
         const teams = await getTeams();
 
+        const teamsObject = {};
+
         for (let team of teams) {
-            this.teams[team.id] = team;
+            teamsObject[team.id] = team;
+        }
+
+        this.teams = teamsObject;
+    },
+    computed: {
+        displayTeam(){
+            return Object.keys(this.teams).length > 0;
         }
     },
     data() {
@@ -58,15 +67,15 @@ export default {
         prepareBet() {
             const bets = getByRoundAndParticipant(this.round, this.participant);
 
-            this.bet = {};
+            const betObject = {};
 
             for (let bet in bets) {
-                this.bet[bet.match_id] = bet;
+                betObject[bet.match_id] = bet;
             }
 
             for (let match of this.matchs) {
-                if (!this.bet[match.id]) {
-                    this.bet[match.id] = {
+                if (!betObject[match.id]) {
+                    betObject[match.id] = {
                         round_id: this.round,
                         participant_id: this.participant,
                         match_id: match.id,
@@ -75,6 +84,8 @@ export default {
                     };
                 }
             }
+
+            this.bet = betObject;
         },
         save() {}
     },
