@@ -10,10 +10,10 @@ export async function saveRound(id, number) {
         return DB.round.add({ number });
     }
     else {
-        return DB.round.update(id, { number });
+        return DB.round.update(parseInt(id), { number });
     }
 }
 
 export async function getRound(id) {
-    return DB.round.get(id);
+    return DB.round.get(parseInt(id));
 }

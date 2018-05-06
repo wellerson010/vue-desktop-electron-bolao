@@ -126,7 +126,7 @@ export default {
                 teams[match.team_away_id] = true;
             }
 
-            await saveMatch(this.round.id, this.matchs, this.matchDeleted);
+            await saveMatch(this.matchs, this.matchDeleted);
             this.$router.push({ name: 'round'});
             this.loading = false; 
         }

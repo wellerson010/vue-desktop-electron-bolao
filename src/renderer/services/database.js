@@ -9,7 +9,7 @@ export async function initDatabase() {
         team: '++id',
         match: '++id, round_id', //team_home_id, team_away_id, goals_home, goals_away
         
-        bet: '++id, participant_id, match_id, goals_home, goals_away, points',
+        bet: '++id, participant_id, round_id, match_id',// match_id, goals_home, goals_away, points',
         participant_round: '++id, participant_id, round_id'
     });
 

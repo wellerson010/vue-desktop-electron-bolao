@@ -1,10 +1,10 @@
 import DB from '../services/database';
 
 export async function getByRound(roundId){
-    return DB.match.where('round_id').equals(roundId).toArray();
+    return DB.match.where('round_id').equals(parseInt(roundId)).toArray();
 }
 
-export async function save(roundId, matchs, matchsDeleted){
+export async function save(matchs, matchsDeleted){
     for(let match of matchsDeleted){
         if (match){
             await DB.match.delete(match);

@@ -9,11 +9,11 @@ export async function saveParticipant(id, name) {
         return DB.participant.add({ name });
     }
     else {
-        return DB.participant.update(id, { name });
+        return DB.participant.update(parseInt(id), { name });
     }
 }
 
 export async function getParticipant(id) {
-    return DB.participant.get(id);
+    return DB.participant.get(parseInt(id));
 }
 
