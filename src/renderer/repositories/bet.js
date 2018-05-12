@@ -7,6 +7,12 @@ export async function getByRoundAndParticipant(roundId, participantId){
     }).toArray();
 }
 
+export async function getByMatchId(matchId){
+    return DB.bet.where({
+        match_id: parseInt(matchId)
+    }).toArray();
+}
+
 export async function getAllBetsByRound(roundId){
     return DB.bet.where({
         round_id: parseInt(roundId)

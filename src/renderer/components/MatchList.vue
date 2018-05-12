@@ -26,7 +26,8 @@
                 </el-select>
             </div>
             <div>
-                <el-button type="warning" @click="remove(match.token, match.id)">Deletar</el-button>
+                <el-button type="primary" @click="bet(match)">Apostas</el-button>
+             <!--   <el-button type="warning" @click="remove(match.token, match.id)">Deletar</el-button> -->
             </div>
         </div>
 
@@ -36,13 +37,28 @@
                  <el-button type="danger" @click="cancel">Cancelar</el-button>
             </el-button-group>
         </div>
+
+        <el-dialog :visible.sync="showPopupBetMatch">
+            <div v-for="data in dataPopupBetMatch" :key="data.points" class="container-bet-points">
+                <span class="title">{{data.points}} pontos</span>
+
+                <div v-for="d in data.data" :key="d.participant_id">
+                    <span class="name">{{d.name}}</span>
+                    <span class="score">{{d.goals_home}} x {{d.goals_away}}</span>
+                </div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import { getRound } from '../repositories/round';
 import { getTeams } from '../repositories/team';
+import { getParticipants } from '../repositories/participant';
 import { save as saveMatch, getByRound } from '../repositories/match';
+import { getByMatchId } from '../repositories/bet';
+import { arrayToObject } from '../services/utils';
+import { calculatePoint } from '../services/bet';
 
 export default {
     async created() {
@@ -54,14 +70,25 @@ export default {
         this.teams = await getTeams();
         this.matchs = await getByRound(roundId);
 
+        const participants = await getParticipants();
+        this.participants = arrayToObject(participants);
+
         this.loading = false;
+    },
+    computed: {
+    /*    teamsMissing(){
+            this.matchs //
+        } */
     },
     data() {
         return {
+            dataPopupBetMatch: [], 
             loading: false,
             matchs: [],
             matchDeleted: [],
             round: {},
+            participants: {},
+            showPopupBetMatch: false,
             teams: []
         };
     },
@@ -74,9 +101,52 @@ export default {
                 round_id: this.round.id,
                 team_home_id: 0,
                 team_away_id: 0,
-                goals_home: -1,
-                goals_away: -1
+                goals_home: 0,
+                goals_away: 0
             });
+        },
+        async bet(match){
+            if (match.id == 0){
+                alert('A partida precisa ser salva!');
+            }
+            else {
+                let bets = await getByMatchId(match.id);
+                bets = bets.filter(bet => bet.goals_home > -1 && bet.goals_away > -1);
+
+                const data = {};
+                
+                for(let bet of bets){
+                    const points = calculatePoint(match.goals_home, match.goals_away, bet.goals_home, bet.goals_away);
+
+                    if (!data[points]){
+                        data[points] = [];
+                    }
+
+                    data[points].push({
+                        name: this.participants[bet.participant_id].name,
+                        participant_id: bet.participant_id,
+                        goals_home: bet.goals_home,
+                        goals_away: bet.goals_away
+                    });
+                }
+
+                let dataPopup = [];
+
+                for(let d in data){
+                    dataPopup.push({
+                        points: parseInt(d),
+                        data: data[d]
+                    });
+                }
+
+                dataPopup = dataPopup.sort((a,b) => {
+                    return (a.points > b.points)?-1:(a.points < b.points)?1:0;
+                });
+                
+                this.dataPopupBetMatch = dataPopup;
+                console.log(this.dataPopupBetMatch);
+                this.showPopupBetMatch = true;
+            }
         },
         cancel() {
             this.$router.push({ name: 'round' });
@@ -152,5 +222,21 @@ export default {
 
 .container-input {
     width: 60px;
+}
+
+.container-bet-points:not(:last-child){
+    border-bottom: 1px solid #ccc;
+}
+
+.container-bet-points {
+    padding: 8px;
+    font-size: 20px;
+}
+
+.container-bet-points .title{
+    color: #266e92;
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: block;
 }
 </style>

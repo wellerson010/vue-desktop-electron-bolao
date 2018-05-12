@@ -48,7 +48,7 @@ export default {
         this.teams = teamsObject;
     },
     computed: {
-        displayBet(){
+        displayBet() {
             return Object.keys(this.bet).length > 0;
         },
         displayTeam() {
@@ -63,7 +63,7 @@ export default {
         };
     },
     methods: {
-        cancel(){
+        cancel() {
             this.closeCallback();
         },
         async load() {
@@ -74,17 +74,16 @@ export default {
             }
         },
         async prepareBet() {
-            const bets = await getByRoundAndParticipant(this.round, this.participant);
-           
+            const bets = await getByRoundAndParticipant(
+                this.round,
+                this.participant
+            );
+
             const betObject = {};
 
             for (let bet of bets) {
                 betObject[bet.match_id] = bet;
             }
-
-            console.log('betobject', betObject);
-            console.log('bets', bets);
-            console.log('matchs', this.matchs);
 
             for (let match of this.matchs) {
                 if (!betObject[match.id]) {
@@ -96,15 +95,30 @@ export default {
                         goals_away: -1
                     };
                 }
-            } 
+            }
 
             this.bet = betObject;
         },
         save() {
+            let allGames = false;
+            let needConfirmation = false;
+
             for (let bet in this.bet) {
                 const b = this.bet[bet];
 
                 if (b.goals_home == -1 || b.goals_away == -1) {
+                    if ((b.goals_home == -1 && b.goals_away != -1) || (b.goals_home != -1 && b.goals_away == -1)){
+                        alert('Uma partida está com resultado -1 e outro resultado normal!');
+                        return;
+                    }
+                    needConfirmation = true;
+                } else {
+                    allGames = true;
+                }
+            }
+
+            if (allGames) {
+                if (needConfirmation) {
                     const c = confirm(
                         'Nem todos os jogos tiveram resultado, deseja continuar?'
                     );
@@ -113,9 +127,13 @@ export default {
                     }
                     return;
                 }
+                else {
+                    this.saveConfirm();
+                }
             }
-
-            this.saveConfirm();
+            else {
+                this.closeCallback();
+            }
         },
         async saveConfirm() {
             this.loading = true;

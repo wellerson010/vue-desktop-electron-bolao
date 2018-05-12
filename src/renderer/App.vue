@@ -3,7 +3,7 @@
         <el-menu mode="horizontal" @select="changeMenu" :default-active="menuIndex">
             <el-menu-item index="1">Rodada</el-menu-item>
             <el-menu-item index="2">Participantes</el-menu-item>
-            
+            <el-menu-item index="3">Backup</el-menu-item>
         </el-menu>
         <router-view></router-view>
     </div>
@@ -30,6 +30,9 @@ export default {
                 case '2':
                     this.$router.push('/participant');
                     break;
+                case '3':
+                    this.$router.push('/backup');
+                    break;
             }
         },
         setupMenuIndex(name) {
@@ -40,6 +43,9 @@ export default {
                     break;
                 case 'participant':
                     this.menuIndex = '2';
+                    break;
+                case 'backup':
+                    this.menuIndex = '3';
                     break;
             }
         }

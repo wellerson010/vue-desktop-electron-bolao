@@ -8,6 +8,7 @@ import ParticipantEdit from '../components/ParticipantEdit';
 import RoundParticipant from '../components/RoundParticipant';
 import MatchList from '../components/MatchList';
 import Ranking from '../components/Ranking';
+import Backup from '../components/Backup';
 
 Vue.use(Router);
 
@@ -47,6 +48,11 @@ export default new Router({
       path: '/ranking/:id',
       name: 'ranking',
       component: Ranking
+    },
+    {
+      path: '/backup',
+      name: 'backup',
+      component: Backup
     },
     {
       path: '*',
