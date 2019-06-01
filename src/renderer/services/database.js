@@ -20,6 +20,7 @@ export async function initDatabase() {
         return Promise.resolve();
     }
 
+    
     return createTeams(db);
 }
 
@@ -87,7 +88,6 @@ export function importDatabase() {
 async function createTeams(db) {
     const teams = [
         'Vasco',
-        'América-MG',
         'São Paulo',
         'Atlético-MG',
         'Corinthians',
@@ -96,21 +96,40 @@ async function createTeams(db) {
         'Botafogo',
         'Atlético-PR',
         'Palmeiras',
-        'Vitória',
         'Fluminense',
         'Flamengo',
         'Internacional',
-        'Sport',
         'Bahia',
         'Grêmio',
         'Santos',
         'Chapecoense',
-        'Paraná'
+        'Fortaleza',
+        'CSA',
+        'Avaí',
+        'Goiás'
     ];
 
     for (let name of teams) {
         await db.team.add({ name });
     }
+}
+
+
+export async function deleteAll(){
+    const value = confirm('Deseja mesmo apagar tudo?');
+
+    return new Promise((resolve, reject) => {
+        const indexedDB = db.backendDB();
+        IndexedDB.clearDatabase(indexedDB, function(err) {
+            if (err) {
+                alert('Error: ' + err.message);
+                reject(err);
+            } else {
+                alert('Ok');
+            }
+        });
+    });
+    
 }
 
 export default db;
