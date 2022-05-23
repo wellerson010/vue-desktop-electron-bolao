@@ -51,7 +51,7 @@
     }
   },
   "dependencies": {
-    "dexie": "^2.0.3",
+    "dexie": "^3.2.2",
     "element-ui": "^2.3.6",
     "indexeddb-export-import": "^1.0.3",
     "vue": "^2.3.3",
